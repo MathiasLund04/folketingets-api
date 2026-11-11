@@ -1,0 +1,201 @@
+{
+  "info": {
+    "name": "Folketingets API – tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api"
+    },
+    {
+      "key": "ministerId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Hent alle ministre",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Svar er 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Svaret er en liste', function () { pm.expect(pm.response.json()).to.be.an('array'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Opret minister – manglende felter giver 400",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"navn\":\"Ufuldstændig test\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Ugyldig minister afvises med 400', function () { pm.response.to.have.status(400); });",
+              "pm.test('Fejlsvar indeholder error', function () { pm.expect(pm.response.json()).to.have.property('error'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Opret testminister",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"navn\":\"Postman Testminister\",\"ministerpost\":\"Testminister\",\"parti\":\"TEST\",\"aktiv\":true}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Minister oprettes med status 201', function () { pm.response.to.have.status(201); });",
+              "const minister = pm.response.json();",
+              "pm.test('Svaret indeholder ministerens ID og data', function () {",
+              "  pm.expect(minister).to.have.property('_id');",
+              "  pm.expect(minister.navn).to.eql('Postman Testminister');",
+              "  pm.expect(minister.parti).to.eql('TEST');",
+              "});",
+              "pm.collectionVariables.set('ministerId', minister._id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Hent testminister",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/{{ministerId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Minister findes med status 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Det er den oprettede testminister', function () { pm.expect(pm.response.json().navn).to.eql('Postman Testminister'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Opdater testminister",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"navn\":\"Postman Testminister\",\"ministerpost\":\"Opdateret testpost\",\"parti\":\"TEST\",\"aktiv\":true}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/{{ministerId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Minister opdateres med status 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Den nye ministerpost returneres', function () { pm.expect(pm.response.json().ministerpost).to.eql('Opdateret testpost'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Slet testminister",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/{{ministerId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Minister slettes med status 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Svaret bekræfter sletning', function () { pm.expect(pm.response.json().message).to.eql('minister blev fjernet'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Kontrollér at ministeren er slettet",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/{{ministerId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Slettet minister giver 404', function () { pm.response.to.have.status(404); });"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
