@@ -1,5 +1,4 @@
-README til feedback
-##Folketingets-api
+## Folketingets-api
 Denne opgave er en lille api der lokalt indeholder en liste over aktive ministre. Man kan se aktive ministre, tilføje en ny, redigere i den eksisterende liste samt fjerne en minister.
 
 ## Opstart
