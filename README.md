@@ -2,7 +2,7 @@
 Denne opgave er en lille api der lokalt indeholder en liste over aktive ministre. Man kan se aktive ministre, tilføje en ny, redigere i den eksisterende liste samt fjerne en minister.
 
 ## Opstart
-For at hente listen over ministre, skal man oprette en MongoDB database med databasenavnet ’folketinget’ og collection-navnet ’ ministers’ , derefter køres ’folketingsData’ under ’data’.
+For at hente listen over ministre, skal man oprette en MongoDB database med databasenavnet ’folketinget’ og collection-navnet ’ ministers’ , derefter køres ’folketingsData.js’ under ’data’ mappen.
 Serveren startes ved at køre programmet fra app.js, hvor det bliver kørt lokal på ens egen computer med porten 3000.
 
 ## Endpoints
