@@ -13,9 +13,15 @@ app.use(`/api`, ministerRoutes);
 app.use(errorHandler);
 
 
-mongoose.connect(`mongodb://localhost:27017/folketinget`)
-    .then(() => console.log('MongoDB Connected'))
-    .catch(err => console.log(' MongoDB connection error:', err));
+async function startServer() {
+    try {
+        await mongoose.connect('mongodb://localhost:27017/folketinget');
+        console.log('MongoDB Connected');
+        app.listen(3000, () => console.log('Server klar på http://localhost:3000/api/'));
+    } catch (error) {
+        console.error('MongoDB connection error:', error);
+        process.exitCode = 1;
+    }
+}
 
-
-app.listen(3000, () => console.log('Server klar på http://localhost:3000/api/'));
+startServer();

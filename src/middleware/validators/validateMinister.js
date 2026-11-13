@@ -3,7 +3,7 @@ const joi = require('joi');
 
 const schema = joi.object({
     navn: joi.string().trim().required(),
-    ministerpost: joi.string().trim().optional(),
+    ministerpost: joi.string().trim().required(),
     parti: joi.string().trim().required(),
     aktiv: joi.boolean().required(),
     opdateret: joi.date().optional(),
